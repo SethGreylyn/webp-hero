@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+	<head>
+		<title>webp-hero</title>
+	</head>
+	<body>
+		<h1>webp-hero</h1>
+		<canvas></canvas>
+		<p></p>
+		<script>
+			if (window.Worker){
+				var canvas = document.querySelector("canvas");
+				var paragraph = document.querySelector("p")
+
+
+				var decoder = new Worker("source/dwebp-worker.js");
+				var canvas = document.querySelector("canvas")
+				var paragraph = document.querySelector("p")
+
+				decoder.onmessage = function (e) {
+					console.log(e);
+				}
+
+				function loadfile(filename) {
+				var xhr = new XMLHttpRequest()
+				xhr.open("GET", filename)
+				xhr.responseType = "arraybuffer"
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState == 4 && xhr.status == 200) {
+						var webpdata = new Uint8Array(xhr.response)
+						decoder.postMessage([webpdata]);
+					}
+				}
+				xhr.send()
+				}
+
+				loadfile("./source/dice.webp");
+
+			} else {
+				document.getElementById("para").innerText = "Your browswer does not support web workers."
+			}
+		</script>
+	</body>
+</html>
